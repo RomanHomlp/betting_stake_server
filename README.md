@@ -1,10 +1,10 @@
-**Betting Stake Server**
+### Betting Stake Server
 
 This is an HTTP-based back-end which stores and provides
 betting offer's stakes for different customers, with the
 capability to return the highest stakes.
 
-**How to Run**
+### How to Run
 
 Since this is a pure java project with no external dependencies
 or deployment steps required.
@@ -14,19 +14,19 @@ locally and then run it with following command:
 `java -jar betting_stake_server.jar
 `
 
-**API Usage**
+### API Usage
 
 * Get session
-GET http://localhost:9090/{customerId}/session
+`GET http://localhost:9090/{customerId}/session`
 
-* Post a customer’s stake on a betting off
-POST http://localhost:9090/{betofferid}/stake?sessionkey={sessionkey}
-Request Body: <stake>
+* Post a customer’s stake on a betting offer
+`POST http://localhost:9090/{betofferid}/stake?sessionkey={sessionkey}`
+Request Body: {stake}
 
 * Get a high stakes list for a betting offer
-GET http://localhost:9090/{betofferid}/highstakes
+`GET http://localhost:9090/{betofferid}/highstakes`
 
-**Design Decisions**
+### Design Decisions
 
 Given the service needs to be able to handle a lot of simultaneous requests, I have adopted the following design strategy:
 * A ThreadPool is introduced at the entry point to maximize CPU utilization and improve processing efficiency under high 
@@ -34,27 +34,33 @@ concurrency, A bounded queue is used instead of an unbounded queue to reduce the
 * ConcurrentHashMap is selected for storage to guarantee thread safety and achieve efficient read and write.
 * Expired sessions are also cleaned up properly to release memory and avoid unnecessary resource occupation.
 
-**Future Enhancements**
+### Future Enhancements
 
 * Traffic Control: To introduce Rate limiter to protect the service under peak traffic.
 * ThreadPool Tuning: Optimize thread pool parameters based on actual prod hardware to balance throughput and resource usage.
 
-**Project Structure**
+### Project Structure
 
+```text
 betting_stake_server/
 ├── src/
 │   ├── main/
 │   │   ├── java/
-│   │       ├── com/
-│   │           ├── betting/
-│   │               ├── handler/
-│   │               │   └── RootHandler.java # Root http request to corresponding business logic
-│   │               ├── manager/
-│   │               │   ├── SessionManager.java # \Manager customer sessions (generation, validation, expiration)
-│   │               │   └── StakeManager.java # Manager customer stake, add stake and get top 20 stakes for a betting offer
-│   │               └── BettingStakeServerMain.java 
-│   ├── test/
-│       ├── java/
+│   │   │   └── com/
+│   │   │       └── betting/
+│   │   │           ├── handler/
+│   │   │           │   └── RootHandler.java
+│   │   │           ├── manager/
+│   │   │           │   ├── SessionManager.java 
+│   │   │           │   └── StakeManager.java
+│   │   │           └── BettingStakeServerMain.java
+│   └── test/
+│       └── java/
 │           ├── SessionManagerTest.java
 │           └── StakeManagerTest.java
 └── README.md
+```
+* BettingStakeServerMain.java: Entry point
+* RootHandler.java: Root http requests to corresponding business logic
+* SessionManager.java: Manager customer sessions (generation, validation, expiration)
+* StakeManager.java: Manager customer stake, add stake and get top 20 stakes for a betting offer
